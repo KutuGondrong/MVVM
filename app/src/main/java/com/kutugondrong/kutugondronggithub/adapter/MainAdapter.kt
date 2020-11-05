@@ -35,8 +35,32 @@ class MainAdapter(
     override fun onBindViewHolder(holder: DataViewHolder, position: Int) =
         holder.bind(users[position])
 
-    fun addData(list: List<User>) {
+    fun addData(list: List<User>, isAsc: Boolean) {
         users = ArrayList()
         users.addAll(list)
+        if (isAsc) {
+            sortNameByAsc()
+        } else {
+            sortNameByDesc()
+        }
+    }
+
+    fun sortNameByAsc() {
+        var list = users as MutableList<User>
+        list.sortWith(Comparator { o1: User, o2: User ->
+            o1.userName.toLowerCase().compareTo(o2.userName.toLowerCase())
+        })
+        users = list as ArrayList<User>
+        notifyDataSetChanged()
+    }
+
+    fun sortNameByDesc() {
+        var list = users as MutableList<User>
+        list.sortWith(Comparator { o1: User, o2: User ->
+            o1.userName.toLowerCase().compareTo(o2.userName.toLowerCase())
+        })
+        list.reverse()
+        users = list as ArrayList<User>
+        notifyDataSetChanged()
     }
 }

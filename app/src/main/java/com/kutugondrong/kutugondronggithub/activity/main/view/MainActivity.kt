@@ -17,6 +17,7 @@ import com.kutugondrong.kutugondronggithub.adapter.MainAdapter
 import com.kutugondrong.kutugondronggithub.custom.EndlessRecyclerViewScrollListener
 import com.kutugondrong.kutugondronggithub.model.User
 import com.kutugondrong.kutugondronggithub.network.helper.Status
+import com.kutugondrong.kutugondronggithub.utils.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -51,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         txtSearch.setOnEditorActionListener(OnEditorActionListener { v, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                 mainViewModel.searchUser(txtSearch.text.toString())
+                hideSoftKeyboard(this)
                 return@OnEditorActionListener true
             }
             false
@@ -63,11 +65,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         recyclerView.addOnScrollListener(scrollListener)
+        btnAscDesc.setOnClickListener{
+            if (btnAscDesc.text.toString() == ASC) {
+                btnAscDesc.text = DESC
+                adapter.sortNameByDesc()
+            } else {
+                btnAscDesc.text = ASC
+                adapter.sortNameByAsc()
+            }
+        }
     }
 
 
     private fun showEndLessScroll() {
-        Toast.makeText(this, "Sudah di akhir", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, MESSAGEENDLESS, Toast.LENGTH_LONG).show()
     }
 
     private fun fetchUser() {
@@ -78,6 +89,9 @@ class MainActivity : AppCompatActivity() {
                     it.data?.let { data ->
                         addData(data.users)
                         scrollListener?.resetState()
+                        if (data.users.isEmpty()) {
+                            Toast.makeText(this, NODATA, Toast.LENGTH_LONG).show()
+                        }
                     }
                     recyclerView.visibility = View.VISIBLE
                 }
@@ -96,7 +110,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addData(users: List<User>) {
-        adapter.addData(users)
-        adapter.notifyDataSetChanged()
+        adapter.addData(users, btnAscDesc.text.toString() == ASC)
     }
 }
