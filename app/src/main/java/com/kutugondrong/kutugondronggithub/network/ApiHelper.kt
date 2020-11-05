@@ -1,9 +1,9 @@
 package com.kutugondrong.kutugondronggithub.network
 
-import com.kutugondrong.kutugondronggithub.model.User
+import com.kutugondrong.kutugondronggithub.model.ResponseUsers
 import retrofit2.Response
 
 interface ApiHelper {
 
-    suspend fun getUsers(): Response<List<User>>
+    suspend fun getUsers(search: String): Response<ResponseUsers>
 }

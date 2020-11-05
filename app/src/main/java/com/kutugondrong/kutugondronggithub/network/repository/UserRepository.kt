@@ -5,6 +5,6 @@ import javax.inject.Inject
 
 class UserRepository @Inject constructor(private val apiHelper: ApiHelper) {
 
-    suspend fun getUsers() =  apiHelper.getUsers()
+    suspend fun getUsers(search: String) =  apiHelper.getUsers(search)
 
 }

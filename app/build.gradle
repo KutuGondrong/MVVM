@@ -16,7 +16,7 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField 'String', 'BASE_URL', "\"https://5e510330f2c0d300147c034c.mockapi.io/\""
+        buildConfigField 'String', 'BASE_URL', "\"https://api.github.com/search/\""
     }
 
     buildTypes {
@@ -47,6 +47,9 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     implementation 'androidx.activity:activity-ktx:1.1.0'
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
 
     //dagger hilt
     implementation "com.google.dagger:hilt-android:2.28-alpha"
