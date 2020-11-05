@@ -10,9 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.kutugondrong.kutugondronggithub.R
 import com.kutugondrong.kutugondronggithub.activity.main.viewmodel.MainViewModel
 import com.kutugondrong.kutugondronggithub.adapter.MainAdapter
+import com.kutugondrong.kutugondronggithub.custom.EndlessRecyclerViewScrollListener
 import com.kutugondrong.kutugondronggithub.model.User
 import com.kutugondrong.kutugondronggithub.network.helper.Status
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,7 +25,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     private val mainViewModel : MainViewModel by viewModels()
+    private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var adapter: MainAdapter
+    private lateinit var scrollListener: EndlessRecyclerViewScrollListener
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,7 +38,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initUi() {
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        linearLayoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = linearLayoutManager
         adapter = MainAdapter(arrayListOf())
         recyclerView.addItemDecoration(
                 DividerItemDecoration(
@@ -50,6 +56,18 @@ class MainActivity : AppCompatActivity() {
             false
         })
 
+        scrollListener = object : EndlessRecyclerViewScrollListener(linearLayoutManager) {
+            override fun onLoadMore(page: Int, totalItemsCount: Int, view: RecyclerView?) {
+                showEndLessScroll()
+            }
+        }
+
+        recyclerView.addOnScrollListener(scrollListener)
+    }
+
+
+    private fun showEndLessScroll() {
+        Toast.makeText(this, "Sudah di akhir", Toast.LENGTH_LONG).show()
     }
 
     private fun fetchUser() {
@@ -57,7 +75,10 @@ class MainActivity : AppCompatActivity() {
             when (it.status) {
                 Status.SUCCESS -> {
                     progressBar.visibility = View.GONE
-                    it.data?.let { users -> addData(users.users) }
+                    it.data?.let { data ->
+                        addData(data.users)
+                        scrollListener?.resetState()
+                    }
                     recyclerView.visibility = View.VISIBLE
                 }
                 Status.LOADING -> {
@@ -68,6 +89,7 @@ class MainActivity : AppCompatActivity() {
                     //Handle Error
                     progressBar.visibility = View.GONE
                     Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                    scrollListener?.resetState()
                 }
             }
         })
