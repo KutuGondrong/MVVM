@@ -18,6 +18,8 @@ class MainAdapter(
             itemView.textViewUserName.text = user.userName
             Glide.with(itemView.imageViewAvatar.context)
                 .load(user.avatar_url)
+                .placeholder(R.mipmap.ic_launcher)
+                .error(R.drawable.ic_launcher_foreground)
                 .into(itemView.imageViewAvatar)
         }
     }
